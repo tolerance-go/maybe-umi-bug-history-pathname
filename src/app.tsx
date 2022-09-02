@@ -1,4 +1,5 @@
 // 运行时配置
+import { useLocation } from '@umijs/max';
 import { history } from '@umijs/max';
 import qs from 'qs';
 
@@ -12,6 +13,27 @@ const appendQueryStrToPath = (pathname: string, params: object) => {
   return `${pathname}?${qs.stringify(params)}`;
 };
 
+const BackItem = () => {
+  const location = useLocation();
+  return (
+    <div
+      onClick={() => {
+        history.push(
+          appendQueryStrToPath('/table', {
+            // 从什么页面退出
+            // 注意 window.location.pathname 是当前页面路径
+            // @TODO: history.location.pathname 拿到的并不是
+            keyFromWindow: window.location.pathname,
+            keyFromHistory: location.pathname,
+          }),
+        );
+      }}
+    >
+      退出
+    </div>
+  );
+};
+
 export const layout = () => {
   return {
     logo: 'https://img.alicdn.com/tfs/TB1YHEpwUT1gK0jSZFhXXaAtVXa-28-27.svg',
@@ -20,24 +42,7 @@ export const layout = () => {
     },
     actionsRender: (props) => {
       if (props.isMobile) return [];
-      return [
-        <div
-          key="0"
-          onClick={() => {
-            history.push(
-              appendQueryStrToPath('/table', {
-                // 从什么页面退出
-                // 注意 window.location.pathname 是当前页面路径
-                // @TODO: history.location.pathname 拿到的并不是
-                keyFromWindow: window.location.pathname,
-                keyFromHistory: history.location.pathname,
-              }),
-            );
-          }}
-        >
-          退出
-        </div>,
-      ];
+      return [<BackItem key={'0'} />];
     },
   };
 };
